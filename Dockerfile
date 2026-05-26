@@ -56,12 +56,6 @@ RUN php artisan migrate --force || true
 EXPOSE 10000
 # Start Apache
 CMD ["apache2-foreground"]
-4. Create .dockerignore file copy and paste
-vendor
-node_modules
-.git
-5. Go to app/Providers/AppServiceProvider.php and change the code to this one.
-<?php
 namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
