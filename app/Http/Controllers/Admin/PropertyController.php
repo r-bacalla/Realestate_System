@@ -64,39 +64,41 @@ class PropertyController extends Controller
     }
 
     public function update(Request $request, Property $property)
-    {
-        $data = $request->validate([
-            'name' => 'required',
-            'type' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'province' => 'required',
-            'price' => 'required|numeric',
-            'status' => 'required',
-            'bedrooms' => 'required|integer',
-            'bathrooms' => 'required|integer',
-            'area_sqm' => 'required|integer',
-            'description' => 'nullable',
-            'year_built' => 'nullable|integer',
-            'images.*' => 'nullable|image|max:2048',
-        ]);
+{
+    $data = $request->validate([
+        'name' => 'required|string|max:255',
+        'title' => 'nullable|string|max:255',
+        'type' => 'required|string',
+        'address' => 'required|string',
+        'city' => 'required|string',
+        'province' => 'required|string',
+        'price' => 'required|numeric',
+        'status' => 'required|string',
+        'bedrooms' => 'required|integer',
+        'bathrooms' => 'required|integer',
+        'area_sqm' => 'required|integer',
+        'description' => 'nullable|string',
+        'about' => 'nullable|string',
+        'year_built' => 'nullable|integer',
+        'images.*' => 'nullable|image|max:2048',
+    ]);
 
-        $property->update($data);
+    $property->update($data);
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('properties', 'public');
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('properties', 'public');
 
-                $property->images()->create([
-                    'image_path' => $path
-                ]);
-            }
+            $property->images()->create([
+                'image_path' => $path
+            ]);
         }
-
-        return redirect()->route('admin.properties.index')
-            ->with('success', 'Property updated successfully');
     }
 
+    return redirect()
+        ->route('admin.properties.index')
+        ->with('success', 'Property updated successfully');
+}
     public function show(Property $property)
     {
         $property->load('images');
@@ -122,4 +124,6 @@ class PropertyController extends Controller
 
         return back()->with('success', 'Image deleted');
     }
+
+    
 }

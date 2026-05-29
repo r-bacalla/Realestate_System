@@ -36,4 +36,42 @@ class PropertyController extends Controller
         $property->load('images');
         return view('properties.show', compact('property'));
     }
+
+    public function update(Request $request, Property $property)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'title' => 'nullable|string|max:255',
+        'type' => 'required|string|max:255',
+        'address' => 'required|string|max:255',
+        'city' => 'required|string|max:255',
+        'province' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'status' => 'required',
+        'bedrooms' => 'required|integer',
+        'bathrooms' => 'required|integer',
+        'area_sqm' => 'required|numeric',
+        'description' => 'nullable|string',
+        'about' => 'nullable|string',
+        'year_built' => 'nullable|integer',
+        'images.*' => 'nullable|image|max:2048',
+    ]);
+    
+
+    $property->update($validated);
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            $path = $image->store('properties', 'public');
+
+            $property->images()->create([
+                'image_path' => $path,
+            ]);
+        }
+    }
+
+    return redirect()
+        ->route('admin.properties.index')
+        ->with('success', 'Property updated successfully.');
+}
 }

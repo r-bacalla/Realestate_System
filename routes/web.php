@@ -23,6 +23,12 @@ Route::get('/properties', [PropertyController::class, 'index'])
 Route::get('/properties/{property}', [PropertyController::class, 'show'])
     ->name('properties.show');
 
+Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])
+    ->name('properties.edit');
+
+Route::put('/properties/{property}', [PropertyController::class, 'update'])
+    ->name('properties.update');
+
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES
@@ -50,21 +56,31 @@ Route::middleware('auth')->group(function () {
                 $soldCount = \App\Models\Property::where('status', 'sold')->count();
                 $pendingCount = \App\Models\Property::where('status', 'pending')->count();
 
-                return view('admin.dashboard', compact('propertyCount', 'availableCount', 'soldCount', 'pendingCount'));
+                return view('admin.dashboard', compact(
+                    'propertyCount',
+                    'availableCount',
+                    'soldCount',
+                    'pendingCount'
+                ));
             })->name('dashboard');
 
             Route::resource('properties', AdminPropertyController::class);
 
-            // Admin payments management
-            Route::get('payments', [\App\Http\Controllers\PaymentController::class, 'index'])
+            /*
+            |--------------------------
+            | ADMIN PAYMENTS (FIXED)
+            |--------------------------
+            */
+            Route::get('payments', [PaymentController::class, 'index'])
                 ->name('payments.index');
 
-            Route::get('payments/export', [\App\Http\Controllers\PaymentController::class, 'export'])
+            Route::get('payments/export', [PaymentController::class, 'export'])
                 ->name('payments.export');
+            
 
-        Route::delete('/properties/image/{image}', [AdminPropertyController::class, 'deleteImage'])
-            ->name('properties.image.delete');
-    });
+            Route::delete('/properties/image/{image}', [AdminPropertyController::class, 'deleteImage'])
+                ->name('properties.image.delete');
+        });
 
     /*
     |--------------------------------------------------------------------------
@@ -81,17 +97,28 @@ Route::middleware('auth')->group(function () {
     | PAYMENTS
     |--------------------------------------------------------------------------
     */
+
+    
+    Route::get('/leases/{lease}/pay', [PaymentController::class, 'create'])
+        ->name('payments.create');
+
     Route::post('/leases/{lease}/payments', [PaymentController::class, 'store'])
         ->name('payments.store');
+
+    Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])
+        ->name('payments.receipt');
 
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])
         ->name('payments.destroy');
 
+
+    
     /*
     |--------------------------------------------------------------------------
     | PROFILE
     |--------------------------------------------------------------------------
     */
+
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 

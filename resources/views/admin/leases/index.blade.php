@@ -56,7 +56,13 @@
                         </td>
 
                         {{-- Actions --}}
+                        
                         <td class="p-3 flex gap-2">
+
+                            <a href="{{ route('payments.create', $lease) }}"
+                            class="bg-green-600 text-white px-3 py-1 rounded">
+                                Pay Rent
+                            </a>
                             <a href="{{ route('leases.edit', $lease) }}"
                             class="text-blue-600">
                                 Edit

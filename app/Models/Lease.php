@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Payment;
 use Carbon\Carbon;
 
 class Lease extends Model
@@ -92,5 +93,10 @@ class Lease extends Model
     public function balance()
     {
         return $this->monthly_rent * $this->monthsTotal() - $this->totalPaid();
+    }
+
+    public function monthsTotal()
+    {
+        return $this->start_date->diffInMonths($this->end_date);
     }
 }
